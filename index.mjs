@@ -1,9 +1,10 @@
+
 import {stdin as input, stdout as output} from 'node:process';
 import * as readline from 'node:readline/promises';
 import * as os from "os";
-import {log} from "./colorfulLog";
-import * as navigation from './navigation'
-
+import {log} from "./colorfulLog.mjs";
+import * as navigation from './navigation.mjs';
+import * as filesOperation from './filesOperation.mjs'
 
 const getUsername = () => {
     const args = process.argv;
@@ -28,25 +29,27 @@ const closeAction = () => {
     rl.close();
 }
 
-
-
-
-// rl.write(`Welcome to the File Manager, ${username}!`);
 console.log(`Welcome to the File Manager, ${username}!`);
 locationString();
 
-rl.on('line', (line) => {
+rl.on('line', async (line) => {
     try {
         if (line.trim()  === '.exit') closeAction();
-        if (line.trim() === 'up') navigation.getUpperLevel(currentLocation);
-        if (line.trim().startsWith('cd ')) navigation.goToDirectory(line, currentLocation);
-        if (line.trim() === 'ls') navigation.printList(currentLocation);
-        else {
+        else if (line.trim() === 'up') currentLocation = navigation.getUpperLevel(currentLocation);
+        else if (line.trim().startsWith('cd ')) currentLocation = await navigation.goToDirectory(line, currentLocation);
+        else if (line.trim() === 'ls') console.table(await navigation.printList(currentLocation));
+        else if (line.trim().startsWith('cat ')) await filesOperation.catAction(line, currentLocation);
+        else if (line.trim().startsWith('add ')) await filesOperation.addFile(line, currentLocation);
+        else if (line.trim().startsWith('rn ')) await filesOperation.renameFile(line, currentLocation);
+        else if (line.trim().startsWith('cp ')) await filesOperation.copyFile(line, currentLocation);
+        else if (line.trim().startsWith('mv ')) await filesOperation.moveFile(line, currentLocation);
+        else if (line.trim().startsWith('rm ')) await filesOperation.deleteFile(line, currentLocation);
+        else if (line) {
             log.red('Invalid input')
         }
         locationString();
     } catch {
-        log.red('Operation failed')
+        log.red('Operation failed');
     }
 
 

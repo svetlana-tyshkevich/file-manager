@@ -1,4 +1,4 @@
-import {access, constants, readdir} from "node:fs/promises";
+import {access, constants, readdir, stat} from "node:fs/promises";
 import {isAbsolute, join} from "node:path";
 
 export const getUpperLevel = (currentLocation) => {
@@ -8,19 +8,20 @@ export const getUpperLevel = (currentLocation) => {
         if (pathParts.length === 2) {
             currentLocation += '\\';
         }
-
     }
+    return currentLocation;
 }
 
 export const goToDirectory = async (line, currentLocation) => {
     const userPathToDir = line.split(' ')[1];
     const newPath = isAbsolute(userPathToDir) ? userPathToDir : join(currentLocation, userPathToDir);
-    await access(newPath, constants.F_OK).then(() => {
-        currentLocation = newPath;
-    })
+    const isDir = (await stat(newPath)).isDirectory();
+    if (!isDir) throw new Error
+    await access(newPath, constants.F_OK);
+    return newPath;
 };
 
-const getType = (item) => {
+export const getType = (item) => {
     if (item.isFile()) return 'file';
     if (item.isDirectory()) return 'directory';
     if (item.isSymbolicLink()) return 'symbolicLink';
@@ -31,6 +32,5 @@ const getType = (item) => {
 export const printList = async (currentLocation) => {
     const files = await readdir(currentLocation, { withFileTypes: true }, );
     const filesTableData = files.map(item => ({'Name': item.name, 'Type': getType(item)}));
-    const sortedTableData = filesTableData.sort((a, b) =>  a['Type'] < b['Type'] ? -1 : 1);
-    console.table(sortedTableData);
+    return filesTableData.sort((a, b) => a['Type'] < b['Type'] ? -1 : 1);
 };
