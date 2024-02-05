@@ -5,7 +5,8 @@ import {log} from "./colorfulLog.mjs";
 import {hashFileInput} from "./hash.mjs";
 import * as navigation from './navigation.mjs';
 import * as filesOperation from './filesOperation.mjs';
-import * as osModule from './osModule.mjs';
+import * as zipModule from './zip.mjs';
+import {getOSData} from "./osModule.mjs";
 
 const getUsername = () => {
     const args = process.argv;
@@ -43,14 +44,17 @@ rl.on('line', async (line) => {
         else if (line.trim().startsWith('cp ')) await filesOperation.copyFile(line, currentLocation);
         else if (line.trim().startsWith('mv ')) await filesOperation.moveFile(line, currentLocation);
         else if (line.trim().startsWith('rm ')) await filesOperation.deleteFile(line, currentLocation);
-        else if (line.trim().startsWith('os ')) osModule.getOSData(line);
+        else if (line.trim().startsWith('os ')) getOSData(line);
         else if (line.trim().startsWith('hash ')) await hashFileInput(line, currentLocation);
+        else if (line.trim().startsWith('compress ')) await zipModule.compress(line, currentLocation);
+        else if (line.trim().startsWith('decompress ')) await zipModule.decompress(line, currentLocation);
         else if (line) {
             log.red('Invalid input')
         }
-        locationString();
     } catch {
         log.red('Operation failed');
+    } finally {
+        locationString();
     }
 
 

@@ -1,15 +1,15 @@
 import { pipeline } from 'node:stream/promises';
 import {createReadStream, createWriteStream } from 'node:fs';
-import {writeFile, rename, rm} from 'node:fs/promises';
+import {writeFile, rename, rm, access, constants} from 'node:fs/promises';
 import { isAbsolute, join, sep} from "node:path";
 import {stdout as output} from 'node:process';
+import * as os from "os";
 import {log} from "./colorfulLog.mjs";
-
-const locationString = () =>  log.cyan(`You are currently in ${currentLocation}`);
 
 export const catAction = async (line, currentLocation) => {
     const userPath = line.split(' ')[1];
     const path = isAbsolute(userPath) ? userPath : join(currentLocation, userPath);
+    await access(path, constants.F_OK);
     const readableStream = createReadStream(path);
     readableStream.on('readable', () => {
         readableStream.read();
@@ -17,7 +17,7 @@ export const catAction = async (line, currentLocation) => {
     });
     readableStream.on('data', (chunk) => {
         output.write(chunk + os.EOL);
-        locationString();
+        log.cyan(`You are currently in ${currentLocation}`);
     });
 }
 
