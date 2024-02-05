@@ -2,34 +2,25 @@ import {stdin as input, stdout as output} from 'node:process';
 import * as readline from 'node:readline/promises';
 import * as os from "os";
 import {log} from "./colorfulLog.mjs";
-import {hashFileInput} from "./hash.mjs";
-import * as navigation from './navigation.mjs';
 import * as filesOperation from './filesOperation.mjs';
-import * as zipModule from './zip.mjs';
+import {hashFileInput} from "./hash.mjs";
+import {greet, sayBye} from "./helpers.mjs";
+import * as navigation from './navigation.mjs';
 import {getOSData} from "./osModule.mjs";
+import * as zipModule from './zip.mjs';
 
-const getUsername = () => {
-    const args = process.argv;
-    const usernameArg = args.slice(2).find(item => item.startsWith('--username='));
-    if (usernameArg) {
-        return usernameArg.split('=')[1];
-    } else {
-        return 'Username';
-    }
-};
 
 const rl = readline.createInterface({ input, output });
 
-const username = getUsername();
 const homedir = os.homedir();
 let currentLocation = homedir;
 const locationString = () =>  log.cyan(`You are currently in ${currentLocation}`);
 const closeAction = () => {
-    console.log(`Thank you for using File Manager, ${username}, goodbye!`);
+    sayBye();
     rl.close();
 }
 
-console.log(`Welcome to the File Manager, \x1b[35m${username}\x1b[0m!`);
+greet();
 locationString();
 
 rl.on('line', async (line) => {

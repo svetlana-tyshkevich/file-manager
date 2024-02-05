@@ -1,8 +1,8 @@
-import { pipeline } from 'node:stream/promises';
-import {createReadStream, createWriteStream } from 'node:fs';
-import {writeFile, rename, rm, access, constants} from 'node:fs/promises';
-import { isAbsolute, join, sep} from "node:path";
+import {createReadStream, createWriteStream} from 'node:fs';
+import {access, constants, rename, rm, writeFile} from 'node:fs/promises';
+import {isAbsolute, join, sep} from "node:path";
 import {stdout as output} from 'node:process';
+import {pipeline} from 'node:stream/promises';
 import * as os from "os";
 import {log} from "./colorfulLog.mjs";
 
