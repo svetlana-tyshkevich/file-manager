@@ -1,10 +1,10 @@
-
 import {stdin as input, stdout as output} from 'node:process';
 import * as readline from 'node:readline/promises';
 import * as os from "os";
 import {log} from "./colorfulLog.mjs";
 import * as navigation from './navigation.mjs';
-import * as filesOperation from './filesOperation.mjs'
+import * as filesOperation from './filesOperation.mjs';
+import * as osModule from './osModule.mjs';
 
 const getUsername = () => {
     const args = process.argv;
@@ -12,7 +12,7 @@ const getUsername = () => {
     if (usernameArg) {
         return usernameArg.split('=')[1];
     } else {
-        return 'Username'
+        return 'Username';
     }
 };
 
@@ -22,14 +22,12 @@ const username = getUsername();
 const homedir = os.homedir();
 let currentLocation = homedir;
 const locationString = () =>  log.cyan(`You are currently in ${currentLocation}`);
-
-
 const closeAction = () => {
     console.log(`Thank you for using File Manager, ${username}, goodbye!`);
     rl.close();
 }
 
-console.log(`Welcome to the File Manager, ${username}!`);
+console.log(`Welcome to the File Manager, \x1b[35m${username}\x1b[0m!`);
 locationString();
 
 rl.on('line', async (line) => {
@@ -44,6 +42,7 @@ rl.on('line', async (line) => {
         else if (line.trim().startsWith('cp ')) await filesOperation.copyFile(line, currentLocation);
         else if (line.trim().startsWith('mv ')) await filesOperation.moveFile(line, currentLocation);
         else if (line.trim().startsWith('rm ')) await filesOperation.deleteFile(line, currentLocation);
+        else if (line.trim().startsWith('os ')) osModule.getOSData(line);
         else if (line) {
             log.red('Invalid input')
         }
