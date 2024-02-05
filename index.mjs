@@ -2,6 +2,7 @@ import {stdin as input, stdout as output} from 'node:process';
 import * as readline from 'node:readline/promises';
 import * as os from "os";
 import {log} from "./colorfulLog.mjs";
+import {hashFileInput} from "./hash.mjs";
 import * as navigation from './navigation.mjs';
 import * as filesOperation from './filesOperation.mjs';
 import * as osModule from './osModule.mjs';
@@ -43,6 +44,7 @@ rl.on('line', async (line) => {
         else if (line.trim().startsWith('mv ')) await filesOperation.moveFile(line, currentLocation);
         else if (line.trim().startsWith('rm ')) await filesOperation.deleteFile(line, currentLocation);
         else if (line.trim().startsWith('os ')) osModule.getOSData(line);
+        else if (line.trim().startsWith('hash ')) await hashFileInput(line, currentLocation);
         else if (line) {
             log.red('Invalid input')
         }
