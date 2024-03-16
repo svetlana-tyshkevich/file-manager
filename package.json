@@ -1,0 +1,17 @@
+{
+  "name": "file-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "keywords": [
+    "nodejs",
+    "file",
+    "system"
+  ],
+  "author": "svetlana-tyshkevich",
+  "license": "ISC"
+}
